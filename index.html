@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Social Frame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="display">
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <section class="dashboard">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">SOCIAL DASHBOARD</div>
+          <h1 id="accountName">@youraccount</h1>
+        </div>
+
+        <div class="status-wrap">
+          <span id="statusDot" class="status-dot"></span>
+          <span id="lastUpdated">Loading…</span>
+        </div>
+      </header>
+
+      <section id="combinedSection" class="hero-grid">
+        <article class="hero-card">
+          <div class="metric-label">TOTAL VIEWS</div>
+          <div id="totalViews" class="hero-number">—</div>
+          <div id="viewsChange" class="change">—</div>
+        </article>
+
+        <article class="hero-card">
+          <div class="metric-label">TOTAL FOLLOWERS</div>
+          <div id="totalFollowers" class="hero-number">—</div>
+          <div id="followersChange" class="change">—</div>
+        </article>
+      </section>
+
+      <section class="platform-grid">
+        <article id="tiktokSection" class="platform-card">
+          <div class="platform-heading">
+            <div class="platform-icon tiktok-icon">♪</div>
+
+            <div>
+              <div class="platform-name">TikTok</div>
+              <div id="tiktokHandle" class="platform-handle">@youraccount</div>
+            </div>
+          </div>
+
+          <div class="platform-stats">
+            <div class="stat-block">
+              <div class="small-label">Views</div>
+              <div id="tiktokViews" class="platform-number">—</div>
+            </div>
+
+            <div class="stat-block">
+              <div class="small-label">Followers</div>
+              <div id="tiktokFollowers" class="platform-number">—</div>
+            </div>
+          </div>
+        </article>
+
+        <article id="instagramSection" class="platform-card">
+          <div class="platform-heading">
+            <div class="platform-icon instagram-icon">◎</div>
+
+            <div>
+              <div class="platform-name">Instagram</div>
+              <div id="instagramHandle" class="platform-handle">@youraccount</div>
+            </div>
+          </div>
+
+          <div class="platform-stats">
+            <div class="stat-block">
+              <div class="small-label">Views</div>
+              <div id="instagramViews" class="platform-number">—</div>
+            </div>
+
+            <div class="stat-block">
+              <div class="small-label">Followers</div>
+              <div id="instagramFollowers" class="platform-number">—</div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <button id="settingsHotspot" aria-label="Open settings"></button>
+
+    <div id="homeBuildNumber" class="home-build-number">
+      Build —
+    </div>
+  </main>
+
+  <div id="settingsPanel" class="settings-panel hidden">
+    <div class="settings-box">
+      <div class="settings-header">
+        <h2>Frame Settings</h2>
+        <button id="closeSettings" class="close-button">×</button>
+      </div>
+
+      <section class="settings-section">
+        <h3>Display</h3>
+
+        <label class="toggle-row">
+          <span>Combined Totals</span>
+          <input id="showCombined" type="checkbox">
+        </label>
+
+        <label class="toggle-row">
+          <span>TikTok</span>
+          <input id="showTikTok" type="checkbox">
+        </label>
+
+        <label class="toggle-row">
+          <span>Instagram</span>
+          <input id="showInstagram" type="checkbox">
+        </label>
+      </section>
+
+      <section class="settings-section">
+        <h3>Background Color</h3>
+
+        <div class="color-setting">
+          <input id="backgroundColor" type="color" value="#0b1117">
+          <span id="backgroundColorValue">#0B1117</span>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <div class="slider-title">
+          <h3>Brightness</h3>
+          <span id="brightnessValue">100%</span>
+        </div>
+
+        <input
+          id="brightnessSlider"
+          type="range"
+          min="20"
+          max="100"
+          step="5"
+          value="100"
+        >
+      </section>
+
+      <section class="settings-section">
+        <h3>Refresh Data</h3>
+
+        <select id="refreshDuration">
+          <option value="60000">Every minute</option>
+          <option value="300000">Every 5 minutes</option>
+          <option value="900000">Every 15 minutes</option>
+          <option value="1800000">Every 30 minutes</option>
+        </select>
+      </section>
+
+      <section class="settings-section build-section">
+        <span>Build</span>
+        <span id="buildNumber">—</span>
+      </section>
+
+      <section class="settings-actions">
+        <button id="resetSettings" class="secondary-button">
+          Reset Settings
+        </button>
+
+        <button id="saveSettings" class="primary-button">
+          Save
+        </button>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
