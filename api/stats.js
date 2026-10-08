@@ -4,42 +4,56 @@ const INSTAGRAM_USERNAME = "jcubedhax";
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
 
+  let tiktok = {
+    followers: 0,
+    likes: 0,
+    videos: 0
+  };
+
+  let instagram = {
+    followers: 0,
+    posts: 0,
+    error: null
+  };
+
   try {
-    const [tiktok, instagram] = await Promise.all([
-      getTikTokProfile(TIKTOK_USERNAME),
-      getInstagramProfile(INSTAGRAM_USERNAME)
-    ]);
-
-    res.status(200).json({
-      displayName: "@jcubedhax",
-      updatedAt: new Date().toISOString(),
-
-      weeklyViewsChange: 0,
-      weeklyFollowersChange: 0,
-
-      tiktok: {
-        handle: `@${TIKTOK_USERNAME}`,
-        views: 0,
-        followers: tiktok.followers,
-        likes: tiktok.likes,
-        videos: tiktok.videos
-      },
-
-      instagram: {
-        handle: `@${INSTAGRAM_USERNAME}`,
-        views: 0,
-        followers: instagram.followers,
-        posts: instagram.posts
-      }
-    });
+    tiktok = await getTikTokProfile(TIKTOK_USERNAME);
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Could not load social data",
-      message: error.message
-    });
+    console.error("TikTok error:", error);
   }
+
+  try {
+    instagram = await getInstagramProfile(INSTAGRAM_USERNAME);
+  } catch (error) {
+    console.error("Instagram error:", error);
+
+    instagram.error = error.message;
+  }
+
+  res.status(200).json({
+    displayName: "@jcubedhax",
+
+    updatedAt: new Date().toISOString(),
+
+    weeklyViewsChange: 0,
+    weeklyFollowersChange: 0,
+
+    tiktok: {
+      handle: `@${TIKTOK_USERNAME}`,
+      views: 0,
+      followers: tiktok.followers,
+      likes: tiktok.likes,
+      videos: tiktok.videos
+    },
+
+    instagram: {
+      handle: `@${INSTAGRAM_USERNAME}`,
+      views: 0,
+      followers: instagram.followers,
+      posts: instagram.posts,
+      error: instagram.error
+    }
+  });
 }
 
 async function getTikTokProfile(username) {
@@ -93,7 +107,8 @@ async function getInstagramProfile(username) {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/154 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9"
+        "Accept-Language": "en-US,en;q=0.9",
+        Accept: "text/html"
       }
     }
   );
@@ -104,23 +119,46 @@ async function getInstagramProfile(username) {
 
   const html = await response.text();
 
-  const followerMatch =
-    html.match(/"edge_followed_by":\{"count":(\d+)\}/) ||
-    html.match(/"follower_count":(\d+)/) ||
-    html.match(/"followers":\{"count":(\d+)\}/);
+  const patterns = [
+    /"follower_count":(\d+)/,
+    /"edge_followed_by":\{"count":(\d+)\}/,
+    /"followers":\{"count":(\d+)\}/
+  ];
 
-  const postMatch =
-    html.match(/"edge_owner_to_timeline_media":\{"count":(\d+)/) ||
-    html.match(/"media_count":(\d+)/);
+  let followers = null;
 
-  if (!followerMatch) {
-    throw new Error(
-      "Instagram follower data was not found in the public page"
-    );
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+
+    if (match) {
+      followers = Number(match[1]);
+      break;
+    }
+  }
+
+  if (followers === null) {
+    throw new Error("Instagram blocked public follower data");
+  }
+
+  let posts = 0;
+
+  const postPatterns = [
+    /"media_count":(\d+)/,
+    /"edge_owner_to_timeline_media":\{"count":(\d+)/
+  ];
+
+  for (const pattern of postPatterns) {
+    const match = html.match(pattern);
+
+    if (match) {
+      posts = Number(match[1]);
+      break;
+    }
   }
 
   return {
-    followers: Number(followerMatch[1]),
-    posts: postMatch ? Number(postMatch[1]) : 0
+    followers,
+    posts,
+    error: null
   };
 }
