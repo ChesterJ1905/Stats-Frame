@@ -1,4 +1,4 @@
-const BUILD = "1.00";
+const BUILD = "1.01";
 
 const defaults = {
   showCombined: true,
